@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mad Clicker Beta</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden; 
+        }
+
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            z-index: -1; 
+        }
+
+        h1 {
+            color: #070707;
+            margin-bottom: 20px;
+        }
+
+        #login, #menu, #game, #shop, #howItWorks {
+            display: none;
+            border: 2px solid #6a0dad; /* Viola scuro */
+            border-radius: 12px;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: #6a0dad; /* Viola */
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.1s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #550a95; /* Viola scuro al passaggio del mouse */
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        #clickButton {
+            font-size: 24px;
+            padding: 20px;
+            background-color: #ffcc00;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: transform 0.1s, background-color 0.3s;
+        }
+
+        #clickButton:hover {
+            background-color: #ffd633;
+        }
+
+        #shopItems {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #6a0dad; /* Viola scuro */
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            width: 90%;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        #backButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            display: none; 
+        }
+
+        #howItWorks {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<video autoplay muted loop>
+    <source src="back.mp4" type="video/mp4">
+    Il tuo browser non supporta i video.
+</video>
+
+<div id="login">
+    <h1>Accesso</h1>
+    <input type="text" id="username" placeholder="Nome Admin" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Accedi</button>
+</div>
+
+<div id="menu">
+    <h1>Menu</h1>
+    <button onclick="startGame()">Inizia</button>
+    <button onclick="openShop()">Negozio</button>
+    <button onclick="showHowItWorks()">Come funziona il gioco</button>
+</div>
+
+<div id="game">
+    <h1>Punteggio: <span id="score">0</span></h1>
+    <button id="clickButton" onclick="addPoints()">Click Me!</button>
+</div>
+
+<div id="shop">
+    <h1>Negozio</h1>
+    <div id="shopItems"></div>
+    <button onclick="backToMenu()">Indietro</button>
+</div>
+
+<div id="howItWorks">
+    <h1>Come funziona il gioco</h1>
+    <p>In questo gioco devi cliccare sul pulsante "Click Me!" per guadagnare punti. Puoi utilizzare i punti guadagnati nel negozio per acquistare potenziamenti che aumentano il tuo punteggio!</p>
+    <button onclick="backToMenu()">Indietro</button>
+</div>
+
+<footer>
+    Coded and made by Tak Stories
+</footer>
+
+<button id="backButton" onclick="confirmBack()">Torna al Menu</button>
+
+<script>
+    const username = "admin";
+    const password = "admin2024";
+    let score = 0;
+    let canClick = true;
+    let clickBoost = 1;
+
+    function login() {
+        const inputUsername = document.getElementById("username").value;
+        const inputPassword = document.getElementById("password").value;
+
+        if (inputUsername === username && inputPassword === password) {
+            document.getElementById("login").style.display = "none";
+            document.getElementById("menu").style.display = "block";
+            document.getElementById("backButton").style.display = "block"; 
+        } else {
+            alert("Credenziali errate!");
+        }
+    }
+
+    function startGame() {
+        document.getElementById("menu").style.display = "none";
+        document.getElementById("game").style.display = "block";
+        updateScoreDisplay();
+        moveButton();
+    }
+
+    function addPoints() {
+        if (canClick) {
+            score += clickBoost;
+            updateScoreDisplay();
+            moveButton();
+        }
+    }
+
+    function moveButton() {
+        canClick = false;
+        const button = document.getElementById("clickButton");
+        button.style.position = 'absolute';
+        const x = Math.floor(Math.random() * (window.innerWidth - button.clientWidth));
+        const y = Math.floor(Math.random() * (window.innerHeight - button.clientHeight));
+        button.style.left = x + 'px';
+        button.style.top = y + 'px';
+
+        setTimeout(() => {
+            canClick = true;
+        }, 200);
+    }
+
+    function openShop() {
+        document.getElementById("menu").style.display = "none";
+        document.getElementById("shop").style.display = "block";
+        showShopItems();
+    }
+
+    function showShopItems() {
+        const shopItemsContainer = document.getElementById("shopItems");
+        shopItemsContainer.innerHTML = `
+            <div>Boost 1 (100 punti) <button onclick="buyBoost(1, 100, 2)">Compra</button></div>
+            <div>Boost 2 (200 punti) <button onclick="buyBoost(2, 200, 5)">Compra</button></div>
+            <div>Boost 3 (300 punti) <button onclick="buyBoost(3, 300)">Compra</button></div>
+        `;
+    }
+
+    function buyBoost(boostNumber, cost, additionalBoost = 0) {
+        if (score >= cost) {
+            score -= cost;
+            updateScoreDisplay();
+            switch (boostNumber) {
+                case 1:
+                    clickBoost += additionalBoost;
+                    alert(`Hai acquistato Boost 1: ora +${additionalBoost} punti per click!`);
+                    break;
+                case 2:
+                    clickBoost += additionalBoost;
+                    alert(`Hai acquistato Boost 2: ora +${additionalBoost} punti per click!`);
+                    break;
+                case 3:
+                    alert("Hai acquistato Boost 3: clic multipli per 10 secondi!");
+                    let oldClickBoost = clickBoost;
+                    clickBoost = 10; 
+                    setTimeout(() => {
+                        clickBoost = oldClickBoost; 
+                    }, 10000); 
+                    break;
+            }
+        } else {
+            alert("Punti insufficienti!");
+        }
+    }
+
+    function updateScoreDisplay() {
+        document.getElementById("score").innerText = score;
+    }
+
+    function backToMenu() {
+        document.getElementById("shop").style.display = "none";
+        document.getElementById("howItWorks").style.display = "none"; 
+        document.getElementById("game").style.display = "none"; 
+        document.getElementById("menu").style.display = "block";
+    }
+
+    function showHowItWorks() {
+        document.getElementById("menu").style.display = "none";
+        document.getElementById("howItWorks").style.display = "block"; 
+    }
+
+    function confirmBack() {
+        if (confirm("Vuoi veramente tornare al menu?")) {
+            backToMenu();
+        }
+    }
+
+    document.getElementById("login").style.display = "block";
+</script>
+</body>
+</html>
